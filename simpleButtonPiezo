@@ -1,0 +1,22 @@
+
+ const int piezo = 7;
+ const int topButton = 3; //Needs pin 3 for inturrupt status
+ 
+ int buttonState = LOW;
+
+
+void setup() {
+pinMode(topButton,INPUT);
+pinMode(piezo,OUTPUT);
+Serial.begin(9600);
+}
+
+void loop() {
+  int buttonState = digitalRead(topButton);
+  Serial.println(buttonState);
+  if( buttonState==HIGH){
+    tone(7,294);
+  } else {
+      noTone(7);
+    }
+}
