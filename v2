@@ -1,0 +1,85 @@
+
+
+//notes 
+  //top buttonn A0
+  int c = 262;
+  int f = 349;
+  //two button A2
+  int d = 294;
+  int g = 392;
+
+//buttons
+ int topButton = 7;
+ int twoButton = 8;
+ int valTop = 0;
+ int valTwo = 0;
+
+//light sensors
+  int therSenVal;
+  // you didn't name it max/min bc it's counterintuitive
+  int lightSenLow = 1023;
+  int lightSenHigh = 0;
+
+
+//you need to resent the high and low so you can use this in different conditions, also can't /0 for buttons later
+void setup() {
+  Serial.begin(9600);
+  while (millis() < 3000){
+      therSenVal = analogRead(A1);
+        if(therSenVal > lightSenHigh){
+            lightSenHigh = therSenVal;
+          }
+          if(therSenVal < lightSenLow){
+              lightSenLow = therSenVal;
+            }
+    
+    }
+
+  //set buttons as inputs  (might need to set piezo as an output)
+    pinMode(topButton,INPUT);
+    pinMode(twoButton,INPUT);
+    
+  Serial.println("Set up complete");
+  Serial.print("the min light range is ");
+  Serial.println(lightSenLow);
+  Serial.print("the max light range is ");
+  Serial.println(lightSenHigh);
+
+
+}
+
+void loop() {
+  //thermin
+  //you must redeclare this in order for the thermin to coniniously take in new values
+  therSenVal = analogRead(A1);
+  int therVal = map(therSenVal, lightSenLow, lightSenHigh, 50, 1000);
+  Serial.print("the therValue coming into the theremin is ");
+  Serial.println(therVal);
+
+ //use digital read HIGH and LOW to get these values - not the resistors 
+  valTop = digitalRead(topButton);
+  valTwo = digitalRead(twoButton);
+  
+    if(therVal < (lightSenHigh/2) && valTop == HIGH){
+        tone(8, d, 500);
+        Serial.print("the top button is being pressed and is ");
+        Serial.println(valTop);
+        Serial.println("note is d");      
+      } if (therVal > (lightSenHigh/2) && valTop == HIGH) {
+          tone(8, g, 500);
+          Serial.println("note is g");               
+        }
+
+//second button
+    if(therVal < (lightSenHigh/2) && valTwo == HIGH) {
+        tone(8, c, 500);
+        Serial.print("This second button is being pressed and is ");
+        Serial.println(valTwo);
+        Serial.println("note is c");      
+      } if (therVal > (lightSenHigh/2) && valTwo == HIGH) {
+          tone(8, f, 500);
+          Serial.println("note is f");               
+        } 
+}
+
+
